@@ -1,6 +1,6 @@
 <?php
 
-namespace Twicimus;
+namespace Vicimus\Twicimus;
 
 class OAuth
 {
