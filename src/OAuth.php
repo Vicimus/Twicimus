@@ -10,6 +10,15 @@ class OAuth
 	protected $oauthBody;
 	protected $oauthURI;
 
+	/**
+	* Instantiate an instance of OAuth
+	*
+	* @param string $key The customer_key to use
+	* @param string $secret The customer_secret to use
+	* @param string $oauthURI The base URI to connect with
+	* @param string|null $oauthPath The request path to connect with
+	* @param string|null $oauthBody The data to send with your request
+	*/
 	public function __construct($key, $secret, $oauthURI, $oauthPath = null, $oauthBody = null)
 	{
 		$this->oauthURI = $oauthURI;
@@ -26,6 +35,12 @@ class OAuth
 		$this->credentials = $encodedToken;
 	}
 
+	/**
+	* Generates an array containing the headers neccessary
+	* to connect to the OAuth URI;
+	*
+	* @return string[]
+	*/
 	protected function generateHeader()
 	{
 		$header 	= [];
@@ -35,6 +50,13 @@ class OAuth
 		return $header;
 	}
 
+	/**
+	* Sends the request to retrieve the Bearer Token
+	*
+	* @throws Exception if the curl request returns a non 200
+	*
+	* @return string
+	*/
 	public function getBearerToken()
 	{
 		$path = $this->oauthPath;
