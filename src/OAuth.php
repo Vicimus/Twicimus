@@ -2,12 +2,46 @@
 
 namespace Vicimus\Twicimus;
 
+/**
+ * OAuth Class
+ * 
+ * This class is used to simplify the process of using
+ * OAuth to connect to an API. Designed specifically to
+ * connect with the Twitter API, the class may slowly
+ * evolve meet any requiremnets.
+ *
+ * @author Jordan Grieve <jgrieve@vicimus.com>
+ * @version 1.0.0
+ */
+
 class OAuth
 {
+	/**
+	 * Holds the encoded credentials
+	 *
+   	 * @var string
+   	 */
 	protected $credentials;
+
+	/**
+	 * Holds the bearer token returned by the OAuth endpoint.
+	 *
+	 * @var string  
+	 */
 	protected $bearerToken;
-	protected $oauthPath;
-	protected $oauthBody;
+
+	/**
+	 * Any content to be sent in the body of the OAuth request.
+	 *
+	 * @var string|null
+	 */
+	protected $oauthBody = null;
+
+	/**
+	 * The URI to to send the OAuth request
+	 *
+	 * @var string
+	 */
 	protected $oauthURI;
 
 	/**
@@ -16,59 +50,73 @@ class OAuth
 	* @param string $key The customer_key to use
 	* @param string $secret The customer_secret to use
 	* @param string $oauthURI The base URI to connect with
-	* @param string|null $oauthPath The request path to connect with
 	* @param string|null $oauthBody The data to send with your request
 	*/
-	public function __construct($key, $secret, $oauthURI, $oauthPath = null, $oauthBody = null)
+	public function __construct($key, $secret, $oauthURI, $oauthBody = null)
 	{
+
 		$this->oauthURI = $oauthURI;
-		$this->oauthPath = is_null($oauthPath) ? '/oauth2/token' : $oauthPath;
-		$this->oauthBody = is_null($oauthBody) ? 'grant_type=client_credentials' : $oauthBody;
+		$this->oauthBody = $oauthBody;
 
-		$encodedKey = urlencode($key);
-		$encodedSecret = urlencode($secret);
-
-		$fullToken = $encodedKey.':'.$encodedSecret;
-
-		$encodedToken = base64_encode($fullToken);
-
-		$this->credentials = $encodedToken;
+		$this->credentials = $this->createCredentials($key, $secret);
 	}
 
 	/**
-	* Generates an array containing the headers neccessary
-	* to connect to the OAuth URI;
-	*
-	* @return string[]
-	*/
+	 * Generates an array containing the headers neccessary
+	 * to connect to the OAuth URI.
+	 *
+	 * @return string[]
+	 */
 	protected function generateHeader()
 	{
 		$header 	= [];
 		$header[] 	= 'Authorization: Basic '.$this->credentials;
-		$header[] 	= 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8';
+		$header[] 	= 'Content-Type: application/x-www-form-urlencoded;'
+				   .= 'charset=UTF-8';
 
 		return $header;
 	}
 
 	/**
-	* Sends the request to retrieve the Bearer Token
-	*
-	* @throws Exception if the curl request returns a non 200
-	*
-	* @return string
-	*/
+	 * View your encoded credentials that will be sent to 
+	 * the OAuth URI specified.
+	 * 
+	 * @return string
+	 */
+	public function getCredentials()
+	{
+		return $this->credentials;
+	}
+
+	/**
+	 * Set your encoded credentials using the parameters
+	 * passed to the constructor of the object.
+	 *
+	 * @param string $key The customer key
+	 * @param string $secret The customer secret
+	 * 
+	 * @return string
+	 */
+	protected function createCredentials($key, $secret)
+	{
+		return base64_encode(urlencode($key).':'.urlencode($secret));
+	}
+
+	/**
+	 * Sends the request to retrieve the Bearer Token
+	 *
+	 * @throws Exception if the curl request returns a non 200
+	 *
+	 * @return string
+	 */
 	public function getBearerToken()
 	{
-		$path = $this->oauthPath;
-		$body = $this->oauthBody;
-
-
-		$ch = curl_init($this->oauthURI.$path);
+		$ch = curl_init($this->oauthURI);
 
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->generateHeader());
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->oauthBody);
 
 		$results = curl_exec($ch);
 		
