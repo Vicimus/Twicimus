@@ -45,6 +45,14 @@ class OAuth
 	protected $oauthURI;
 
 	/**
+	 * Every time a CURL request is made, the results will
+	 * be stored in this public property.
+	 *
+	 * @var string
+	 */
+	public $lastCurlInfo;
+
+	/**
 	* Instantiate an instance of OAuth
 	*
 	* @param string $key The customer_key to use
@@ -54,7 +62,6 @@ class OAuth
 	*/
 	public function __construct($key, $secret, $oauthURI, $oauthBody = null)
 	{
-
 		$this->oauthURI = $oauthURI;
 		$this->oauthBody = $oauthBody;
 
@@ -71,8 +78,7 @@ class OAuth
 	{
 		$header 	= [];
 		$header[] 	= 'Authorization: Basic '.$this->credentials;
-		$header[] 	= 'Content-Type: application/x-www-form-urlencoded;'
-				   .= 'charset=UTF-8';
+		$header[] 	= 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8';
 
 		return $header;
 	}
@@ -120,13 +126,13 @@ class OAuth
 
 		$results = curl_exec($ch);
 		
-		$info = curl_getinfo($ch);
-	
-		if($info['http_code'] != 200)
-			throw new \Exception('getBearerToken failed');
+		$this->lastCurlInfo = curl_getinfo($ch);
+
+		if($this->lastCurlInfo['http_code'] != 200)
+			throw new OAuthException('Token request failed', 
+									  $this->lastCurlInfo);
 
 		$token = json_decode($results);
-
 		$this->bearerToken = $token->access_token;
 
 		return $this->bearerToken;
