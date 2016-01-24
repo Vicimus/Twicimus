@@ -2,10 +2,31 @@
 
 namespace Vicimus\Twicimus;
 
+/**
+ * OAuth Exception
+ * 
+ * This exception is used whenever there is an
+ * error during the OAuth process.
+ *
+ * @author Jordan Grieve <jgrieve@vicimus.com>
+ * @version 1.0.0
+ */
+
 class OAuthException extends \Exception
 {
+	/**
+	 * Holds the curl info related to the exception
+	 *
+	 * @var $info
+	 */
 	public $info;
 
+	/**
+	* Instantiate an instance of OAuthException
+	*
+	* @param string $message 	The error message to use
+	* @param array 	$curlInfo 	curl info related to the error
+	*/
 	public function __construct($message, array $curlInfo)
 	{
 		parent::__construct($message);
