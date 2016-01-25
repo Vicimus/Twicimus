@@ -45,6 +45,13 @@ class TwitterRest
 	const API_SEARCH = '/1.1/search/tweets.json';
 
 	/**
+	 * The URI to execute a user lookup using the Twitter API
+	 *
+	 * @var string
+	 */
+	const API_USER_LOOKUP = '/1.1/users/show.json';
+
+	/**
 	 * This holds the OAuth instance used to authenticate with the Twitter
 	 * API.
 	 * 
@@ -148,6 +155,36 @@ class TwitterRest
 		);
 
         return $tweets;
+	}
+
+	/**
+	 * Executes a Twitter User Lookup using the Twitter REST API. If
+	 * a user is found, an object containg the resulst will be returned.
+	 *
+	 * @param ulong $userID 	The Twitter User ID to lookup
+	 *
+	 * @throws InvalidArgumentException if $userID is not an integer
+	 * @throws InvalidArgumentException if $userID is negative
+	 *
+	 * @return \stdClass
+	 */
+	public function lookup($userID)
+	{
+		if(!is_numeric($userID))
+			throw new \InvalidArgumentException(
+				'Count parameter must be an integer');
+
+		if($userID < 1)
+			throw new \InvalidArgumentException(
+				'Count parameter must be a positive integer');
+
+		$path = self::API_USER_LOOKUP.'?user_id='.$userID;
+
+		$this->line("\r"."Looking Up: ".$userID);
+
+		$request = $this->request($path);
+
+		return TwitterUserProfile::create($request);
 	}
 
 	/**
