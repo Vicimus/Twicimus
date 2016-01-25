@@ -1,0 +1,137 @@
+<?php
+
+namespace Vicimus\Twicimus;
+
+/**
+ * Twitter User
+ *
+ * This class is mainly used by the Tweet class to represent the 
+ * user that authored the tweet.
+ *
+ * @author Jordan Grieve <jgrieve@vicimus.com>
+ * @version 1.0.0
+ */
+class TwitterUser
+{
+	/**
+	 * The User ID used by Twitter to identify the user
+	 *
+	 * @var ulong
+	 */
+	public $id;
+
+	/**
+	 * The name of the user as assigned through their profile. This will not
+	 * always match their screen name.
+	 * 
+	 * @var string
+	 */
+	public $name;
+
+	/**
+	 * The user's screen name. This is the name that appears after the @ symbol
+	 * when making tweets.
+	 *
+	 * @var string 
+	 */
+	public $screen_name;
+
+	/**
+	 * The location of the user
+	 *
+	 * @var string
+	 */
+	public $location;
+
+	/** 
+     * The user's description has written in their profile
+     *
+     * @var string
+     */
+	public $description;
+
+	/**
+	 * The user can set a link in their profile to a website. This is that
+	 * link. Will be null if user does not have a url.
+	 *
+	 * @var string|null
+	 */
+	public $url;
+
+	/**
+	 * The number of followers this user has
+	 *
+	 * @var integer
+	 */
+	public $followers_count;
+
+	/**
+	 * The number of people this user follows themselves
+	 *
+	 * @var integer
+	 */
+	public $friends_count;
+
+	/**
+	 * The date this user's account was created.
+	 *
+	 * @var DateTime
+	 */
+	public $created_at;
+
+	/**
+	 * The number of tweets this user has made
+	 *
+	 * @var integer
+	 */
+	public $statuses_count;
+
+	/**
+	 * The color set by the user for their profile
+	 *
+	 * @var string
+	 */
+	public $profile_background_color;
+
+	/**
+	 * This is an array of properties that will be collected during
+	 * the parsing of the twitter data. All other properties will be ignored.
+	 *
+	 * @var string[]
+	 */
+	protected static $properties = [
+		'id',
+		'name',
+		'screen_name',
+		'location',
+		'description',
+		'url',
+		'followers_count',
+		'friends_count',
+		'created_at',
+		'statuses_count',
+		'profile_background_color',
+	];
+
+	/**
+	 * Create an instance of TwitterUser by passing an array of properties.
+	 * This is mainly used by the TwitterRest to convert it's raw
+	 * feed data into a more usable collection of Tweet and TwitterUser
+	 * instances.
+	 *
+	 * @param string[] $args An array of properties to turn into a TwitterUser
+	 *
+	 * @return TwitterUser
+	 */
+	public static function create(array $args)
+	{
+		$instance = new self;
+
+		foreach($args as $property => $value)
+			if(in_array($property, self::$properties))
+				$instance->$property = $property == 'created_at' ?
+					new \DateTime($value) : $value;
+
+		return $instance;
+	}
+}
