@@ -6,10 +6,20 @@ use Vicimus\Twicimus\OAuth;
 
 class TestOAuth extends PHPUnit_Framework_TestCase
 {
+	/**
+	 * Set these values to a valid key and secret to enable the tests
+	 * 
+	 * @var string $key
+	 * @var string $secret
+	 */
+	private $key = '';
+	private $secret = '';
+
 	public function testConstructor()
 	{
 		$key = 'xxxx';
 		$secret = 'yyyy';
+
 		$uri = 'https://api.twitter.com/oauth2/token';
 		$body = 'grant_type=client_credentials';
 
@@ -51,13 +61,13 @@ class TestOAuth extends PHPUnit_Framework_TestCase
 	* the tests to include them in the tests.
 	*/
 
-	/*
+	
 	public function testGetBearerTokenSuccessReturn()
 	{
 
 		//Replace with your own key/secret in order to test
-		$key = '';
-		$secret = '';
+		$key = $this->key;
+      	$secret = $this->secret;
 
 		$uri = 'https://api.twitter.com/oauth2/token';
 		$body = 'grant_type=client_credentials';
@@ -68,14 +78,14 @@ class TestOAuth extends PHPUnit_Framework_TestCase
 		$this->assertInternalType('string', $token);
 
 		return $oauth;
-	}*/
+	}
 
 	/**
 	* @depends testGetBearerTokenSuccessReturn
 	*/
-	/*
+	
 	public function testGetBearerTokenSuccessCode(OAuth $oauth)
 	{
 		$this->assertEquals(200, $oauth->lastCurlInfo['http_code']);
-	}*/
+	}
 }

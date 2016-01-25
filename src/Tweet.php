@@ -2,16 +2,74 @@
 
 namespace Vicimus\Twicimus;
 
+/**
+ * Tweet
+ *
+ * This class represents a tweet from Twitter, which belongs to
+ * a Twitter User.
+ *
+ * @author Jordan Grieve <jgrieve@vicimus.com>
+ * @version 1.0.0
+ */
 class Tweet
 {
+	/**
+	 * The date the tweet was written
+	 *
+	 * @var DateTime
+	 */
 	public $created_at;
-	public $id;
-	public $text;
-	public $retweet_count;
-	public $favorite_count;
-	public $user;
-	public $retweeted;
 
+	/**
+	 * The id as assigned by Twitter
+	 *
+	 * @var ulong
+	 */
+	public $id;
+
+	/**
+	 * The main body of the Tweet
+	 *
+	 * @var string
+	 */
+	public $text;
+
+	/**
+	 * Number of times this tweet was retweeted
+	 *
+	 * @var integer
+	 */
+	public $retweet_count;
+
+	/**
+	 * Number of times this tweet has been favorited
+	 *
+	 * @var integer
+	 */
+	public $favorite_count;
+
+	/**
+	 * An instance of TwitterUser representing the User this tweet
+	 * belongs to.
+	 *
+	 * @var TwitterUser
+	 */
+	public $user;
+
+	/**
+	 * Determines if this is an original tweet by the user or if it was
+	 * just retweeted by them.
+	 *
+	 * @var boolean
+	 */
+	public $retweeted = false;
+
+	/**
+	 * This is an array of properties that will be collected during
+	 * the parsing of the twitter data.
+	 *
+	 * @var string[]
+	 */
 	protected static $properties = [
 		'created_at',
 		'id',
@@ -21,6 +79,15 @@ class Tweet
 		'user'
 	];
 
+	/**
+	 * Create an instance of Tweet by passing an array of properties.
+	 * This is mainly used by the TwitterRest to convert it's raw
+	 * feed data into a more usable collection of Tweet instances.
+	 *
+	 * @param string[] $args 	An array of properties to turn into a Tweet
+	 *
+	 * @return Tweet
+	 */
 	public static function create(array $args)
 	{
 		$instance = new self;

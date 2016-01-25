@@ -1,0 +1,8 @@
+<phpunit>
+  <testsuites>
+    <testsuite name="twicimus">
+      <file>tests/oauth/TestOAUth.php</file>
+      <file>tests/twitterrest/TestTwitterRest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>
