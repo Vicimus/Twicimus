@@ -47,7 +47,7 @@ class TwitterUserProfile
 		foreach($args as $property => $value)
 			if(in_array($property, self::$properties))
 				$instance->$property = $value;
-
+		
 		return $instance;
 	}
 }
